@@ -1,0 +1,151 @@
+[
+    {
+        "id": "bd914980.a4c9d8",
+        "type": "light-scheduler",
+        "z": "63dfbc77.bebe94",
+        "settings": "bc023b9.e858cc8",
+        "events": "[{\"start\":{\"dow\":1,\"mod\":0},\"end\":{\"dow\":1,\"mod\":15}}]",
+        "topic": "",
+        "name": "Once a week",
+        "onPayload": "ON",
+        "onPayloadType": "str",
+        "offPayload": "OFF",
+        "offPayloadType": "str",
+        "onlyWhenDark": false,
+        "sunElevationThreshold": 6,
+        "sunShowElevationInStatus": false,
+        "outputfreq": "output.statechange",
+        "x": 150,
+        "y": 340,
+        "wires": [
+            [
+                "cce2d3db.51288"
+            ]
+        ]
+    },
+    {
+        "id": "85c5fc1a.058f5",
+        "type": "switch",
+        "z": "63dfbc77.bebe94",
+        "name": "ON only",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "ON",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 460,
+        "y": 340,
+        "wires": [
+            [
+                "ebd143.f10fbec",
+                "7b4db3fe.6f32dc"
+            ]
+        ]
+    },
+    {
+        "id": "7b4db3fe.6f32dc",
+        "type": "delay",
+        "z": "63dfbc77.bebe94",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "1",
+        "timeoutUnits": "hours",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "x": 640,
+        "y": 300,
+        "wires": [
+            [
+                "963523b0.5cdbc"
+            ]
+        ]
+    },
+    {
+        "id": "963523b0.5cdbc",
+        "type": "api-call-service",
+        "z": "63dfbc77.bebe94",
+        "name": "hassio",
+        "server": "1e776005.3ee9b",
+        "service_domain": "hassio",
+        "service": "addon_stdin",
+        "data": "{\"addon\":\"7be23ff5_dropbox_sync\",\"input\":{\"command\":\"upload\"}}",
+        "x": 810,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "ebd143.f10fbec",
+        "type": "function",
+        "z": "63dfbc77.bebe94",
+        "name": "format snapshot",
+        "func": "msg.payload = \n{\n  \"data\": \n  {\n    \"name\": (new Date().toISOString().replace(':', '_').replace(':', '_').replace(/\\..+/, ''))+\"_Snapshot\",\n    \"folders\":[\"homeassistant\",\"share\"]\n  }\n}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 680,
+        "y": 360,
+        "wires": [
+            [
+                "826d23b8.3775f"
+            ]
+        ]
+    },
+    {
+        "id": "826d23b8.3775f",
+        "type": "api-call-service",
+        "z": "63dfbc77.bebe94",
+        "name": "Snapshot",
+        "server": "1e776005.3ee9b",
+        "service_domain": "hassio",
+        "service": "snapshot_partial",
+        "data": "{}",
+        "x": 900,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "cce2d3db.51288",
+        "type": "rbe",
+        "z": "63dfbc77.bebe94",
+        "name": "",
+        "func": "rbe",
+        "gap": "",
+        "start": "",
+        "inout": "out",
+        "property": "payload",
+        "x": 310,
+        "y": 340,
+        "wires": [
+            [
+                "85c5fc1a.058f5"
+            ]
+        ]
+    },
+    {
+        "id": "bc023b9.e858cc8",
+        "type": "light-scheduler-settings",
+        "z": "",
+        "name": "my settings",
+        "latitude": "27.890814",
+        "longitude": "-82.50234640000001"
+    },
+    {
+        "id": "1e776005.3ee9b",
+        "type": "server",
+        "z": "",
+        "name": "Home Assistant",
+        "url": "http://hassio/homeassistant",
+        "pass": "NotMyPassword"
+    }
+]
